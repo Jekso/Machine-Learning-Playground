@@ -1,9 +1,35 @@
 import numpy as np
+import pandas as pd
+import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 
-x = np.array([[100, 150], [3, 2], [10, 25], [200, 200], [15, 10]])
-y = np.array([2, 1, 1, 2, 1])
+# import & clean data
+data_set = pd.read_csv('Social_Network_Ads.csv')
+data_set = pd.get_dummies(data=data_set, columns=['Gender'], drop_first=True)
+x = data_set[['Age', 'EstimatedSalary', 'Gender_Male']]
+y = data_set['Purchased']
 
-model = RandomForestClassifier(n_estimators=100)
-model.fit(x, y)
-print model.predict(np.array([[55, 55]]))
+
+# scale the data
+scaler = StandardScaler()
+x = scaler.fit_transform(x)
+
+
+# train test split
+x_train, x_test, y_train, y_test = train_test_split(x, y)
+
+
+# fitting the model with training data
+model = RandomForestClassifier(criterion='entropy', n_estimators=100)
+model.fit(x_train, y_train)
+
+# predict and accuracy
+y_pred = model.predict(x_test)
+print('Probability of each predicted values: {}'.format(model.predict_proba(x_test)))
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+print('Accuracy: {}'.format(model.score(x_test, y_test)))
+print('Accuracy: {}'.format(accuracy_score(y_test, y_pred)))

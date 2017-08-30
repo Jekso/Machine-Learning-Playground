@@ -1,28 +1,34 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 
-# init
-x = np.array([i for i in range(50)]).reshape(-1, 1)
-y = np.array([5 for i in range(25)]+[10 for i in range(25, 50)])
+# import & clean data
+data_set = pd.read_csv('Social_Network_Ads.csv')
+data_set = pd.get_dummies(data=data_set, columns=['Gender'], drop_first=True)
+x = data_set[['Age', 'EstimatedSalary', 'Gender_Male']]
+y = data_set['Purchased']
+
+
+# scale the data
+scaler = StandardScaler()
+x = scaler.fit_transform(x)
+
 
 # train test split
 x_train, x_test, y_train, y_test = train_test_split(x, y)
 
-# plotting
-plt.plot(x_train, y_train, 'go', label='data points', linewidth=5)
-plt.xlabel('x values')
-plt.ylabel('y values')
-plt.legend()
-plt.show()
 
 # fitting the model with training data
 model = LogisticRegression()
 model.fit(x_train, y_train)
 
 # predict and accuracy
-print 'Test data-set values:', x_test
-print 'Predicted values:', model.predict(x_test)
-print 'Accuracy:', model.score(x_test, y_test)
-print 'Probability of each predicted values: ', model.predict_proba(x_test)
+y_pred = model.predict(x_test)
+print('Probability of each predicted values: {}'.format(model.predict_proba(x_test)))
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+print('Accuracy: {}'.format(model.score(x_test, y_test)))
+print('Accuracy: {}'.format(accuracy_score(y_test, y_pred)))
