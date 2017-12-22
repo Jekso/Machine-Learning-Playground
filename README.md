@@ -26,6 +26,7 @@ a playground for Machine Learning problems.
 
 * ***Natural Language Processing***
     * - [x] Predict if Customers like the Restaurant or not from thier reviews using Naive Bays Classifier 
+    * - [x] Spam Filter Classifier using the TFID Vectorizer & Naive Bays
 
 * ***Dimension Reduction***
     * - [x] Apply PCA
